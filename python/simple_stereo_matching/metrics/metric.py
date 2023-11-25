@@ -42,3 +42,10 @@ class Metric(ABC):
         unfold_ops = torch.nn.Unfold(kernel_size=window_size, padding=window_size // 2)
         windows = unfold_ops(img).view(-1, window_size**2, height, width)
         return windows
+
+    @staticmethod
+    def get_best(cost_volume: torch.Tensor) -> torch.Tensor:
+        assert len(cost_volume.shape) == 3
+        best_matrix = torch.max(cost_volume, dim=0).values
+        assert len(best_matrix.shape) == 2
+        return best_matrix
