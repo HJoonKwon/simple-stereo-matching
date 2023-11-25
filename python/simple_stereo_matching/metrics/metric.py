@@ -23,3 +23,24 @@ class Metric(ABC):
             window_size (int): window size for computing the metric
         """
         pass
+
+    @staticmethod
+    def _get_windows(img: torch.Tensor, window_size: int):
+        """Get the windows of the image.
+
+        Args:
+            img (torch.Tensor): image
+            window_size (int): window size
+
+        Returns:
+            torch.Tensor: windows of the image
+        """
+        assert (
+            len(img.shape) == 3 and img.shape[0] == 1
+        ), "Image shape should be (1, H, W)"
+        img = img.unsqueeze(0)
+        batch_size = img.shape[0]
+        height, width = img.shape[-2], img.shape[-1]
+        unfold_ops = torch.nn.Unfold(kernel_size=window_size, padding=window_size // 2)
+        windows = unfold_ops(img).view(batch_size, -1, window_size**2, height, width)
+        return windows
