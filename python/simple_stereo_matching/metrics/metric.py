@@ -36,8 +36,9 @@ class Metric(ABC):
             torch.Tensor: windows of the image
         """
         assert (
-            len(img.shape) == 3 and img.shape[0] == 1
-        ), "Image shape should be (1, H, W)"
+            len(img.shape) == 2
+        ), f"Image shape {img.shape} should be (H, W) grayscale"
+        img = img.unsqueeze(0)
         height, width = img.shape[-2], img.shape[-1]
         unfold_ops = torch.nn.Unfold(kernel_size=window_size, padding=window_size // 2)
         windows = unfold_ops(img).view(-1, window_size**2, height, width)
@@ -46,6 +47,6 @@ class Metric(ABC):
     @staticmethod
     def get_best(cost_volume: torch.Tensor) -> torch.Tensor:
         assert len(cost_volume.shape) == 3
-        best_matrix = torch.max(cost_volume, dim=0).values
+        best_matrix = torch.argmin(cost_volume, dim=0)
         assert len(best_matrix.shape) == 2
         return best_matrix
