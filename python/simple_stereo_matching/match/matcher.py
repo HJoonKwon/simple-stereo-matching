@@ -1,4 +1,6 @@
 import torch
+import numpy as np
+from PIL import Image
 from simple_stereo_matching.metrics import METRIC_CLASSES
 
 
@@ -6,8 +8,23 @@ class Matcher:
     def __init__(self):
         super().__init__()
 
+    @staticmethod
+    def read_img_as_tensor(img_path: str) -> torch.Tensor:
+        """Reads an image from a file and converts it to a tensor.
+
+        Args:
+            img_path (str): Path to the image file
+
+        Returns:
+            torch.Tensor: Image tensor
+        """
+        img = Image.open(img_path).convert("L")
+        img = torch.from_numpy(np.array(img)) / 255.0
+        assert img.dtype == torch.float32
+        return img
+
+    @staticmethod
     def compute_disparity(
-        self,
         left_img: torch.Tensor,
         right_img: torch.Tensor,
         max_disparity: int,
