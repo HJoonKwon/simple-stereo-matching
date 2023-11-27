@@ -36,8 +36,8 @@ class SSD(Metric):
 
         for d in range(max_disparity):
             # roll in width dimension (horizontal shift)
-            shifted_right_windows = torch.roll(right_windows, -d, dims=-1)
-            shifted_right_windows[..., -d:] = 0
+            shifted_right_windows = torch.roll(right_windows, d, dims=-1)
+            shifted_right_windows[..., :d] = 0
 
             ssd = torch.sum((left_windows - shifted_right_windows) ** 2, dim=1)
             cost_volume[d] = ssd
