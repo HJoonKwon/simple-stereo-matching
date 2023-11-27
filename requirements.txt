@@ -1,0 +1,6 @@
+Pillow
+matplotlib 
+pytest 
+tqdm
+opencv-python
+jupyterlab 
